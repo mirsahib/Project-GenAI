@@ -8,7 +8,7 @@ class Recipe extends Model {
     declare recipe_name: string
     declare ingredients: string
     declare total_time: number
-    declare cusine: string
+    declare cuisine: string
     declare instructions: string
     declare url: string
     declare image_url: string
@@ -37,7 +37,7 @@ Recipe.init({
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    cusine: {
+    cuisine: {
         type: DataTypes.STRING,
         allowNull: false
     },
