@@ -18,7 +18,6 @@ export default function index() {
     const [page, setPage] = useState(1);
     const [searchText, setSearchText] = useState<string>("");
     const [catagory, setCatagory] = useState<string>("Fruits & Vegetables");
-
     const fetchData = async (
         page: number = 1,
         limit: number = 12,
@@ -28,6 +27,7 @@ export default function index() {
         try {
             const filterparams = encodeURIComponent(JSON.stringify(filters));
             const url = `${apiUrl.listproducts}?page=${page}&limit=${limit}&searchText=${searchText? searchText : ""}&filters=${filterparams ? filterparams : ""}`;
+            console.log("🚀 ~ index ~ url:", url)
             const response = await getData<ProductResponse>(url);
             // console.log("🚀 ~ fetchData ~ response:", response);
             if (!response.success) {
@@ -54,6 +54,7 @@ export default function index() {
     };
 
     useEffect(() => {
+
         if (!searchText.trim()) {
             fetchData(page, 12,"", catagory ? [{ category: [catagory] }] : []);
         }else {

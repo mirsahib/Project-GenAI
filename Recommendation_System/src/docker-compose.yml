@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  app:
+    build: 
+      context: ./server
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/server
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root
+      - TRENDY_PORT=8080
+    networks:
+      backend_network:
+        aliases:
+          - be_server
+
+  postgres:
+    image: postgres:14.1-alpine
+    build: 
+      context: ./database
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/database-seed.sql:/docker-entrypoint-initdb.d/database-seed.sql
+    networks:
+      backend_network:
+        aliases:
+          - postgres_db
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "mirsahib24@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "mirsahib123"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      backend_network:
+
+  client:
+    build: 
+      context: ./ui
+    volumes:
+      - ./ui:/ui
+    ports:
+      - "3000:3000"
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge

@@ -20,12 +20,7 @@ class ProductApi {
         this.app.get('/api/product/:id', this.ProductService.readByID)
         this.app.put('/api/product/:id', this.ProductService.updateById)
         this.app.delete('/api/product/:id', this.ProductService.deleteById)
-        this.app.all("*", (req, res) => {
-            res.status(404).json({
-                success: false,
-                error: "Route not found",
-            });
-        });
+        
     }
 }
 

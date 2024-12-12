@@ -1,4 +1,4 @@
-const localUrl = 'http://172.19.0.4:8080/api';
+const localUrl = 'http://localhost:8080/api';
 
 const baseUrl = localUrl;
 

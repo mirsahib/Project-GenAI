@@ -15,7 +15,7 @@ class RecipeApi{
         this.upload = multer({storage:storage})
 
         //register routes
-        this.app.get('/api/recipe',this.RecipeService.readAll)
+        this.app.post('/api/recipes',this.RecipeService.generateRecipe)
 
     }
 }

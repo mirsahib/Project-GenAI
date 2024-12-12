@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import ProductModel from "../model/Product.model";
 
 
@@ -42,6 +42,15 @@ class ProductRepository {
     readById = async (id: string) => {
         const product = await ProductModel.findByPk(id)
         return product
+    }
+    readUniqueCatagories = async () => {
+        const categories = await ProductModel.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('category')), 'category']],
+            raw: true,
+        });
+
+        // Extract the category names
+        return categories.map((c) => c.category);
     }
     updateById = async (id: string, updatedField: Object) => {
         const product = await ProductModel.update(updatedField, { where: { id: id } })

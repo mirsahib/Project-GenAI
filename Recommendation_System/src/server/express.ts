@@ -15,7 +15,7 @@ const app = async (app:Express)=>{
     new ProductApi(app)
     // new AuthApi(app)
     new RecipeApi(app)
-
+ 
 }
 
 export default app

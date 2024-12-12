@@ -27,7 +27,7 @@ class ProductService {
     readAll = async (req: Request, res: Response) => {
         try {
             const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
+            const limit = parseInt(req.query.limit as string) || 12;
             const searchText = req.query.searchText as string
 
             const filters = req.query.filters ? JSON.parse(req.query.filters as string) : undefined;
@@ -38,13 +38,16 @@ class ProductService {
             });
 
             const { count, products } = await this.ProductRepository.read(page, limit, searchText, filters);
-            res.json({
-                code: 200, metaData: {
+            const catagories = await this.ProductRepository.readUniqueCatagories()
+            res.status(200).json({
+                success: true,
+                metaData: {
                     currentPage: page,
                     totalCount: count,
                     totalPages: Math.ceil(count / limit),
                     limit: limit
-                }, data: products
+                },
+                data: { "products": products, "catagories": catagories }
             })
         } catch (error) {
             errorMessage(error, res)
@@ -53,7 +56,6 @@ class ProductService {
     readByID = async (req: Request, res: Response) => {
         try {
             const id = req.params.id
-            console.log("🚀 ~ ProductService ~ readByID= ~ id:", id)
             if (!id) {
                 throw new CustomError("Invalid id parameter", 400);
             }
@@ -72,6 +74,7 @@ class ProductService {
         }
 
     }
+
     updateById = async (req: Request, res: Response) => {
         try {
             const id = req.params.id

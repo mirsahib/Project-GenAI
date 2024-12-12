@@ -14,6 +14,7 @@ class Recipe extends Model {
     declare image_url: string
     declare ingredient_count: number
     declare product_name: string
+    declare product_name_vector: string
 }
 
 
@@ -30,7 +31,7 @@ Recipe.init({
         allowNull: false
     },
     ingredients: {
-        type: DataTypes.ARRAY(DataTypes.TEXT),
+        type: DataTypes.TEXT,
         allowNull: false
     },
     total_time: {
@@ -58,8 +59,12 @@ Recipe.init({
         allowNull: false
     },
     product_name: {
-        type: DataTypes.ARRAY(DataTypes.TEXT),
+        type: DataTypes.TEXT,
         allowNull: false
+    },
+    product_name_vector: {
+        type: 'VECTOR(300)',
+        allowNull: false 
     }
 }, {
     // Other model options go here
@@ -67,7 +72,7 @@ Recipe.init({
     modelName: 'Recipe' // We need to choose the model name
 })
 
-Recipe.sync({ force: true }).then(() => console.log('Recipe table created')).catch(error => {
+Recipe.sync().then(() => console.log('Recipe table created if not exists')).catch(error => {
     console.log('Failed to create Recipe table', error)
 })
 
