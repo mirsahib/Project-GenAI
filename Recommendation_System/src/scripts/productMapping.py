@@ -1,4 +1,4 @@
-import os 
+import os
 import ast
 import pandas as pd
 import numpy as np
@@ -20,7 +20,7 @@ class ProductMapping:
             'Beverages',
             'Fruits & Vegetables'
         ]
-        self.stop_word = ['water', 'salt']
+        self.stop_word = ['water', 'salt', 'sugar']
         self.model_name = 'all-MiniLM-L6-v2'
         self.model = SentenceTransformer(self.model_name)
         self.threshold = 0.6
@@ -67,21 +67,23 @@ class ProductMapping:
         )
         self.data['recipe'] = recipe
         return recipe['IngredientName']
-    
-    def formate_recipe_ingredients(self,recipe_col):
+
+    def formate_recipe_ingredients(self, recipe_col):
         recipe = self.data['recipe']
-        recipe [recipe_col] = recipe[recipe_col].apply(lambda x: [ingredient.strip() for ingredient in x.split(',')])
+        recipe[recipe_col] = recipe[recipe_col].apply(
+            lambda x: [ingredient.strip() for ingredient in x.split(',')])
         self.data['recipe'] = recipe
         return recipe
 
-    def compute_product_embeddings(self,product_col):
+    def compute_product_embeddings(self, product_col):
         if os.path.exists(self.embedding_file):
             print("Loading product embeddings from file...")
             self.product_embeddings = np.load(self.embedding_file)
         else:
             print("Computing product embeddings...")
             product = self.data['product'][product_col]
-            self.product_embeddings = self.model.encode(product, show_progress_bar=True)
+            self.product_embeddings = self.model.encode(
+                product, show_progress_bar=True)
             np.save(self.embedding_file, self.product_embeddings)
             print("Product embeddings saved to file.")
 
@@ -96,7 +98,8 @@ class ProductMapping:
             if ingredient in self.cache:
                 # Use cached result
                 best_matches.append(self.cache[ingredient])
-                print(f'Cache hit for ingredient: {ingredient}, mapped to: {self.cache[ingredient]}')
+                # print(
+                #     f'Cache hit for ingredient: {ingredient}, mapped to: {self.cache[ingredient]}')
             else:
                 # Process this ingredient if not cached
                 ingredients_to_process.append(ingredient)
@@ -107,7 +110,7 @@ class ProductMapping:
                 ingredients_to_process, show_progress_bar=True)
             similarity_matrix = cosine_similarity(
                 ingredient_embeddings, self.product_embeddings)
-            print('Similarity matrix calculated')
+            # print('Similarity matrix calculated')
 
         # Find best match for non-cached ingredients and update the cache
         for i, ingredient in enumerate(ingredients_to_process):
@@ -116,19 +119,18 @@ class ProductMapping:
             best_score = similarities[best_match_idx]
             best_product = products[best_match_idx]
 
-            print(
-                f'Best match for {ingredient} is {best_product}')
+            # print(
+            #     f'Best match for found')
             if best_score >= self.threshold:
                 best_matches.append(best_product)
                 self.cache[ingredient] = best_product  # Update cache
-            else:
-                print(
-                    f'No suitable match for {ingredient} (similarity below threshold)')
+            # else:
+            #     # print(
+            #     #     f'No suitable match for {ingredient} (similarity below threshold)')
 
         return best_matches
-    
-    
-    def map_ingredients_to_products(self,product_col,recipe_col):
+
+    def map_ingredients_to_products(self, product_col, recipe_col):
         self.formate_recipe_ingredients(recipe_col)
         # self.extract_edible_products()
         productName = self.data['product'][product_col]
@@ -137,34 +139,46 @@ class ProductMapping:
         recipe = self.data['recipe']
         mapped_products = []
         self.compute_product_embeddings(product_col)
-        for row in ingredientName:
-            filtered_ingredients = [
-                ingredient for ingredient in row if ingredient.lower() not in self.stop_word]
-            ingredient_to_product = self.get_mapped_products(
-                filtered_ingredients, productName)
-            mapped_products.append(ingredient_to_product)
+
+        try:
+            for idx, row in enumerate(ingredientName):
+                filtered_ingredients = [
+                    ingredient for ingredient in row
+                    if not any(stop_word in ingredient.lower() for stop_word in self.stop_word)
+                ]
+                print('Row', idx, "processed")
+                ingredient_to_product = self.get_mapped_products(
+                    filtered_ingredients, productName)
+                if "Potato Finger Salt" in ingredient_to_product:
+                    print("ingredient with potato finger salt",ingredient_to_product)
+                mapped_products.append(ingredient_to_product)
+
+        except Exception as e:
+            print(f"Error processing row {e}")
 
         recipe['ProductName'] = mapped_products
         # recipe = recipe.drop(columns=[recipe_col])
         recipe.to_csv('mapped_recipes.csv', index=False)
-    def recommend_recipies(self,user_products):
+
+    def recommend_recipies(self, user_products):
         try:
             df = pd.read_csv('mapped_recipes.csv')
-            df['ProductName'] = df['ProductName'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-    
+            df['ProductName'] = df['ProductName'].apply(
+                lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
             # Calculate the overlap count for each recipe
-            df['MatchCount'] = df['ProductName'].apply(lambda products: len(set(products) & set(user_products)))
-    
+            df['MatchCount'] = df['ProductName'].apply(
+                lambda products: len(set(products) & set(user_products)))
+
             # Get the row with the maximum match count
             best_match = df.loc[df['MatchCount'].idxmax()]
-            
+
             # Drop the 'MatchCount' column as it's for internal use
             best_match = best_match.drop(labels='MatchCount')
-            
+
             return best_match
         except Exception as e:
             print(f"An error occurred: {e}")
-        
 
 
 def main():

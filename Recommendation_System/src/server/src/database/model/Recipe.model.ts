@@ -63,7 +63,7 @@ Recipe.init({
         allowNull: false
     },
     product_name_vector: {
-        type: 'VECTOR(300)',
+        type: DataTypes.ARRAY(DataTypes.FLOAT),
         allowNull: false 
     }
 }, {

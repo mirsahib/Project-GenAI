@@ -1,22 +1,33 @@
-import { Op, Sequelize } from "sequelize";
-import RecipeModel from "../model/Recipe.model";
-
+import { Op, Sequelize, QueryTypes } from "sequelize";
+import PostgresService from "../PostgresService";
 
 class RecipeRepository {
-    generateRecipe = async (products: string[]) => {
-        const searchPattern = products
-            .map(product => product.toLowerCase())
-            .join('%');
+    generateRecipe = async (productEmbedding: any) => {
+        const embeddingVector = `[${productEmbedding.join(",")}]`;
+        const query = `
+        SELECT 
+            recipe_name,
+            product_name,
+            ingredients,
+            total_time,
+            cuisine,
+            instructions,
+            url,
+            image_url,
+            ingredient_count,
+            (product_name_vector::vector(384)) <=> (?::vector(384)) AS similarity
+        FROM "Recipes"
+        ORDER BY similarity ASC
+        LIMIT ?;
+        `;
+        const sequelize = PostgresService.getInstance().getConnection()
 
-        const recipes = await RecipeModel.findAll({
-            where: Sequelize.where(
-                Sequelize.fn('lower', Sequelize.fn('array_to_string', Sequelize.col('product_name'), ',')),
-                {
-                    [Op.iLike]: `%${searchPattern}%`
-                }
-            )
+        const results = await sequelize.query(query, {
+            replacements: [embeddingVector, 5], // Safely pass the embedding and limit
+            type: QueryTypes.SELECT, // Ensure results are returned as plain objects
         });
-        return recipes
+
+        return results; // Return the fetched recipes
     }
 }
 

@@ -1,4 +1,4 @@
-interface IRecipe{
+interface Recipe{
     id: string
     recipe_name: string
     ingredients: string
@@ -9,13 +9,13 @@ interface IRecipe{
     image_url: string
     ingredient_count: number
     product_name: string
+    similarity: number
 }
 
 interface RecipeResponse {
     success: boolean;
     data: {
-        products: IRecipe[];
-        catagories: string[];
+        recipies: Recipe[];
     };
     metaData: {
         currentPage: number;
@@ -25,4 +25,4 @@ interface RecipeResponse {
     };
     error?: string; // Optional in case of failure
 }
-export {IRecipe, RecipeResponse}
+export {Recipe, RecipeResponse}
