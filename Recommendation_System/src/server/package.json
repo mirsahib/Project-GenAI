@@ -1,0 +1,44 @@
+{
+  "name": "trendy-ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node -r tsconfig-paths/register index.ts",
+    "getAllOrder": "curl http://localhost:3000/api/order",
+    "getOrder": "curl http://localhost:8080/api/order:1",
+    "createOrder": "curl -X POST http://localhost:3000/api/order",
+    "updateOrder": "curl -X PUT http://localhost:3000/api/order:1",
+    "deleteOrder": "curl -X DELETE http://localhost:3000/api/order:1",
+    "getUser": "curl http://localhost:8080/api/user/:1"
+  },
+  "author": "Mir Sahib",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow-models/universal-sentence-encoder": "^1.3.3",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "cloudinary": "^1.30.0",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.4.1",
+    "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.20.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.6.5",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
+  }
+}
