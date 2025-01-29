@@ -43,14 +43,42 @@ This project aims to solve this problem by providing tailored recipe recommendat
 
 ---
 
+
 ### 📥 **Setup Instructions**  
 
 #### Prerequisites  
 - Node.js  
 - Python 3.x  
-- PostgreSQL  
+- PostgreSQL 
 
 #### Steps to Run  
 1. Clone the repository:  
    ```bash  
-   git clone https://github.com/your-username/grocery-recommendation-system.git  
+   git clone https://github.com/mirsahib/Project-GenAI.git
+   cd Project-GenAI/Recommendation_System/src/
+   ```
+## 🧹 Data Preprocessing  
+
+The original product dataset contains over **9,000 product entries**, categorized into **11 different groups**. However, not all categories contain edible products relevant to our recommendation system.  
+
+### 🔹 **Filtering Edible Products**  
+Out of the 11 categories, only the following are considered **edible**:  
+- **Foodgrains, Oil & Masala**  
+- **Gourmet & World Food**  
+- **Snacks & Branded Foods**  
+- **Eggs, Meat & Fish**  
+- **Bakery, Cakes & Dairy**  
+- **Beverages**  
+- **Fruits & Vegetables**  
+
+After filtering, the dataset consists of:  
+- **Edible Products:** 2,409  
+- **Non-Edible Products:** 5,799  
+
+This refined subset is used to train our recommendation model.  
+
+### 📊 **Exploratory Data Analysis (EDA)**  
+A primary **EDA** on the product dataset, including category distributions, missing value analysis, and key insights, is documented in the **`src/notebook/`** folder. This analysis helps in understanding data patterns and refining preprocessing techniques.  
+
+  
+
