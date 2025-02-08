@@ -9,7 +9,7 @@ Each folder in this repository represents a standalone project, complete with it
 
 ### 📂 **Projects List**  
 
-1. **[Grocery Recommendation System](./Recommendation_System)**  
+1. **[Recipe Recommendation System](./Recommendation_System)**  
    A system that recommends recipes based on products purchased or available at home using NLP. It leverages the Hugging Face Sentence Transformer and cosine similarity for recommendations.  
 
 ---

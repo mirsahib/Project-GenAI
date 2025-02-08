@@ -1,4 +1,4 @@
-# Grocery Recommendation System  
+# Recipe Recommendation System  
 
 ### 🛒 **Project Description**  
 The Grocery Recommendation System is an intelligent tool that helps users discover recipes based on the groceries they have purchased or already have on their shelves. By leveraging **natural language processing (NLP)**, the system matches users' products to suitable recipes and identifies any missing ingredients. This tool offers personalized recommendations and can enhance the user experience for online grocery stores by acting as a seamless integration into their platforms.  
@@ -78,7 +78,39 @@ After filtering, the dataset consists of:
 This refined subset is used to train our recommendation model.  
 
 ### 📊 **Exploratory Data Analysis (EDA)**  
-A primary **EDA** on the product dataset, including category distributions, missing value analysis, and key insights, is documented in the **`src/notebook/`** folder. This analysis helps in understanding data patterns and refining preprocessing techniques.  
+A primary **EDA** on the product dataset, including category distributions, missing value analysis, and key insights, is documented in the **`src/notebook/`** folder. This analysis helps in understanding data patterns and refining preprocessing techniques.
+
+## 🧠 Algorithm  
+
+The recommendation system is designed to suggest recipes based on the products a user has purchased or already possesses. However, a key challenge is that the **recipe ingredient names** do not exactly match the **product names** from the grocery dataset. To bridge this gap, we leverage **sentence embeddings** to compute similarities and associate products with relevant recipes.  
+
+### 🔹 **Step-by-Step Process**  
+
+1. **Data Preparation**  
+   - The **product dataset** contains product names, while the **recipe dataset** includes a list of ingredients.  
+   - Ingredients in recipes may have different wording or variations compared to product names.  
+
+2. **Encoding Product Names & Recipe Ingredients**  
+   - We use **Sentence Transformers** to generate high-dimensional vector representations (embeddings) for both **product names** and **recipe ingredients**.  
+   - This helps capture semantic similarities even when exact word matches are unavailable.  
+
+3. **Matching Products to Recipes**  
+   - For each **ingredient** in the recipe dataset, we compute the similarity score with all available **product names** from the product dataset.  
+   - The **best matching product name** is assigned to the respective recipe.  
+   - The **matched product name** is stored in the recipe dataset in a new column named **`ProductName`**.  
+   - The corresponding **vector representation** of the product name is also stored in a new column named **`product_name_vector`**.  
+
+4. **Recommendation Algorithm**  
+   - When a user inputs a **product name**, we generate its **vector encoding** using the same sentence transformer model.  
+   - We perform a similarity search against the **`product_name_vector`** column in the recipe dataset using **PostgreSQL pg_vector** extension.  
+   - The recipes with the highest similarity scores are returned as recommendations.  
+
+### 🔍 **Why Sentence Transformers & pg_vector?**  
+- **Sentence Transformers** allow us to capture **semantic meaning** beyond keyword matching, improving recommendation accuracy.  
+- **pg_vector** provides efficient **vector-based similarity search**, making retrieval fast and scalable within PostgreSQL.  
+
+This approach ensures that users receive **accurate and relevant** recipe suggestions based on the groceries they have.  
+
 
   
 
